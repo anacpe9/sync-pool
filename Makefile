@@ -21,7 +21,7 @@ test-coverage-html: test-coverage-html-ci
 test-coverage-treemap-ci: test-coverage-template
 	go-cover-treemap            -coverprofile coverage/coverage.out > coverage/coverage.svg
 
-test-coverage-treemap: test-coverage-template
+test-coverage-treemap: test-coverage-treemap-ci
 	open                                                              coverage/coverage.svg
 
 # https://github.com/oligot/go-mod-upgrade
