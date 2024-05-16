@@ -43,16 +43,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: github.event.head_commit.message
-      run: echo ${{ github.event.head_commit.message }}
+      run: echo "${{ github.event.head_commit.message }}"
 
     - name: github.ref_type
-      run: echo ${{ github.ref_type }}
+      run: echo "${{ github.ref_type }}"
 
     - name: github.ref
-      run: echo ${{ github.ref }}
+      run: echo "${{ github.ref }}"
 
     - name: github.ref_name
-      run: echo ${{ github.ref_name }}
+      run: echo "${{ github.ref_name }}"
 
   allow:
     # Check if the commit has a tag and is on a main branch
