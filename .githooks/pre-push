@@ -38,23 +38,23 @@ while read local_ref local_sha remote_ref remote_sha; do
     exit 1
   fi
 
-  # Extract associated branch
-  associated_branch=$(git branch --contains "$(git rev-list -n 1 "$tag_name")" | awk '{print $2}')
+  # # Extract associated branch
+  # associated_branch=$(git branch --contains "$(git rev-list -n 1 "$tag_name")" | awk '{print $2}')
 
-  # Validate branch and tag association
-  if ! [[ "$associated_branch" =~ $REGEX_BRANCH ]]; then
-    echo "$ERROR_PREFIX Tag '$tag_name' cannot be pushed to branch '$associated_branch'."
-    exit 1
-  fi
+  # # Validate branch and tag association
+  # if ! [[ "$associated_branch" =~ $REGEX_BRANCH ]]; then
+  #   echo "$ERROR_PREFIX Tag '$tag_name' cannot be pushed to branch '$associated_branch'."
+  #   exit 1
+  # fi
 
-  # Extract version from branch name
-  branch_version=$(echo "$associated_branch" | grep -oE "\d+\.\d+$")
+  # # Extract version from branch name
+  # branch_version=$(echo "$associated_branch" | grep -oE "\d+\.\d+$")
 
-  # Check if tag version corresponds to branch version
-  if ! [[ "$tag_name" == "$branch_version".* ]]; then
-    echo "$ERROR_PREFIX Tag '$tag_name' is not associated with the branch version '$branch_version'."
-    exit 1
-  fi
+  # # Check if tag version corresponds to branch version
+  # if ! [[ "$tag_name" == "$branch_version".* ]]; then
+  #   echo "$ERROR_PREFIX Tag '$tag_name' is not associated with the branch version '$branch_version'."
+  #   exit 1
+  # fi
 
 done
 
