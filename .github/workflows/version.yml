@@ -10,6 +10,34 @@ env:
   # REGEX_BRANCH: "(release|staging)-(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
 
 jobs:
+  name:
+    name: Allow running pipeline on valid folders / files name
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: The folders and filenames pattern
+      run: |
+        echo $VALID_NAME
+
+    - name: Validate folders / files name
+      run: |
+        curr_commit=$(git rev-parse HEAD)
+        all_files=$(git show --pretty="" --name-only $curr_commit | grep -E '\.(go)$')
+        for full_path in $all_files; do
+          if [[ ! $full_path =~ $VALID_NAME ]]; then
+            echo "[INVALID] $full_path"
+            echo "error: folders and filenames must be kebab-case only!"
+            exit 1
+          fi
+
+          echo "[VALID] $full_path"
+        done
+
   allow:
     # Check if the commit has a tag and is on a main branch
     # and commit message does not contain 'skip ci' words
@@ -80,7 +108,7 @@ jobs:
         echo ${{ steps.validate_tag.outputs.errors }}
 
   test:
-    needs: [allow]
+    needs: [name, allow]
     name: "Testing"
     runs-on: ubuntu-latest
     env:
@@ -88,6 +116,13 @@ jobs:
     outputs:
       VALID_TAG: ${{ env.VALID_TAG }}
     steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22'
+
     - name: "Test"
       run: make test
 

@@ -1,15 +1,54 @@
-name: Build and deploy to the staging environment
+name: Testing every push commit
 
 on:
   push:
     branches:
       - main
 
+env:
+  # the validat_name regex pattern, which same in the .githooks/pre-commit script
+  VALID_NAME: ^(((\.)?[a-z][a-z0-9]*)((-|\.)[a-z0-9]+)*)(((\/)(\.)?[a-z][a-z0-9]*)((-|\.)[a-z0-9]+)*)*(_test\.go)?$
+
 jobs:
+  allow:
+    name: Allow running pipeline on valid folders / files name
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: The folders and filenames pattern
+      run: |
+        echo $VALID_NAME
+
+    - name: Validate folders / files name
+      run: |
+        curr_commit=$(git rev-parse HEAD)
+        all_files=$(git show --pretty="" --name-only $curr_commit | grep -E '\.(go)$')
+        for full_path in $all_files; do
+          if [[ ! $full_path =~ $VALID_NAME ]]; then
+            echo "[INVALID] $full_path"
+            echo "error: folders and filenames must be kebab-case only!"
+            exit 1
+          fi
+
+          echo "[VALID] $full_path"
+        done
+
   test:
     name: "Testing"
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22'
+
     - name: "Test"
       run: make test
 
