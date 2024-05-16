@@ -85,7 +85,7 @@ jobs:
       run:
         shell: bash
     outputs:
-      VALID_TAG: ${{ steps.validate_tag.outputs.GIT_REF_TAG }}
+      SHARE_TAG: ${{ steps.validate_tag.outputs.GIT_REF_TAG }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -144,7 +144,7 @@ jobs:
       id: validate_tag
       run: |
         tag_name=$(git describe --tags --exact-match HEAD 2>/dev/null || true)
-        echo -n "$tag_name" >> $GIT_REF_TAG
+        echo "GIT_REF_TAG=$tag_name" >> $GITHUB_OUTPUT
 
     - name: Details on failure
       if: ${{ failure() }}
@@ -156,9 +156,9 @@ jobs:
     name: "Testing"
     runs-on: ubuntu-latest
     env:
-      VALID_TAG: ${{ needs.allow.outputs.VALID_TAG }}
+      VALID_TAG: ${{ needs.allow.outputs.SHARE_TAG }}
     outputs:
-      VALID_TAG: ${{ env.VALID_TAG }}
+      SHARE_TAG: ${{ steps.validate_tag.outputs.GIT_REF_TAG }}
     steps:
     - uses: actions/checkout@v4
 
@@ -166,6 +166,9 @@ jobs:
       uses: actions/setup-go@v5
       with:
         go-version: '1.22'
+
+    - name: VALID_TAG
+      run: echo "$VALID_TAG"
 
     - name: Test
       run: make test
@@ -191,7 +194,7 @@ jobs:
     - name: Cache tag_name for share to other jobs
       id: validate_tag
       run: |
-        echo -n "$tag_name" >> $GIT_REF_TAG
+        echo "GIT_REF_TAG=$VALID_TAG" >> $GITHUB_OUTPUT
 
   release:
     needs: [test]
@@ -199,9 +202,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ github.token }}
-      VALID_TAG: ${{ needs.test.outputs.VALID_TAG }}
+      VALID_TAG: ${{ needs.test.outputs.SHARE_TAG }}
     outputs:
-      VALID_TAG: ${{ env.VALID_TAG }}
+      SHARE_TAG: ${{ env.VALID_TAG }}
     steps:
     - uses: actions/download-artifact@v4
       with:
