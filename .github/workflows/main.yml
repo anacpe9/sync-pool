@@ -39,7 +39,7 @@ jobs:
         done
 
   test:
-    name: "Testing"
+    name: Testing
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -49,14 +49,17 @@ jobs:
       with:
         go-version: '1.22'
 
-    - name: "Test"
+    - name: Test
       run: make test
 
-    - name: "Test Coverage"
+    - name: Test Coverage
       run: make test-coverage
 
-    - name: "Test Coverage - HTML"
+    - name: Test Coverage - HTML
       run: make test-coverage-html-ci
 
-    - name: "Test Coverage - Treemap"
+    - name: install nikolaydubina/go-cover-treemap
+      run: go install github.com/nikolaydubina/go-cover-treemap@latest
+
+    - name: Test Coverage - Treemap
       run: make test-coverage-treemap-ci
