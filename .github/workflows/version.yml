@@ -39,8 +39,7 @@ jobs:
         done
 
   commit:
-    if: ${{ !contains(github.event.head_commit.message, 'skip ci') && github.ref_type == 'tag' && startsWith(github.ref, 'refs/heads/main') }}
-    name: Allow running pipeline on the current commit has a tag
+    name: Github ref
     runs-on: ubuntu-latest
     steps:
     - name: github.event.head_commit.message
