@@ -102,13 +102,15 @@ jobs:
     - name: Try to get the tag name associated with the current commit
       run: |
         tag_name=$(git describe --tags --exact-match HEAD 2>/dev/null || true)
+        echo "tag_name: $tag_name"
 
     - name: Check if the tag name is empty (indicating no tag found)
       run: |
         if [[ -z "$tag_name" ]]; then
           echo "Error: No tag found for the current commit."
-          git log --oneline -n 10
-          git tag
+          echo "tag_name: $tag_name"
+          echo "git log : $(git log --oneline -n 10)"
+          echo "git tag : $(git tag)"
           exit 1
         fi
 
