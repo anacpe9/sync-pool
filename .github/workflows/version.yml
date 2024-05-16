@@ -144,7 +144,7 @@ jobs:
       id: validate_tag
       run: |
         tag_name=$(git describe --tags --exact-match HEAD 2>/dev/null || true)
-        echo ::set-output name=GIT_REF_TAG::$tag_name
+        echo -n "$tag_name" >> $GIT_REF_TAG
 
     - name: Details on failure
       if: ${{ failure() }}
@@ -191,7 +191,7 @@ jobs:
     - name: Cache tag_name for share to other jobs
       id: validate_tag
       run: |
-        echo ::set-output name=GIT_REF_TAG::$tag_name
+        echo -n "$tag_name" >> $GIT_REF_TAG
 
   release:
     needs: [test]
@@ -214,6 +214,6 @@ jobs:
         release_name: Release ${{ env.VALID_TAG }}
         body: |
           Changes in this Release
-          - First Release
+          - First Public
         draft: false
         prerelease: false
