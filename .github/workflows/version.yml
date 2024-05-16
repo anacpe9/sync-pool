@@ -78,7 +78,7 @@ jobs:
     # # Check if the commit has a tag and is on a main branch
     # # and commit message does not contain 'skip ci' words
     # if: ${{ !contains(github.event.head_commit.message, 'skip ci') && github.ref_type == 'tag' && startsWith(github.ref, 'refs/heads/main') }}
-    if: ${{ !contains(github.event.head_commit.message, 'skip ci') && github.ref_type == 'main' && startsWith(github.event.head_commit.message, 'Release ') }}
+    if: ${{ !contains(github.event.head_commit.message, 'skip ci') && github.ref_name == 'main' && startsWith(github.event.head_commit.message, 'Release ') }}
     name: Allow running pipeline on the current commit has a tag
     runs-on: ubuntu-latest
     defaults:
