@@ -163,21 +163,24 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up Go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v5
       with:
         go-version: '1.22'
 
-    - name: "Test"
+    - name: Test
       run: make test
 
-    - name: "Test Coverage"
+    - name: Test Coverage
       run: make test-coverage
 
-    - name: "Test Coverage - HTML"
-      run: make test-coverage-html
+    - name: Test Coverage - HTML
+      run: make test-coverage-html-ci
 
-    - name: "Test Coverage - Treemap"
-      run: make test-coverage-treemap
+    - name: install nikolaydubina/go-cover-treemap
+      run: go install github.com/nikolaydubina/go-cover-treemap@latest
+
+    - name: Test Coverage - Treemap
+      run: make test-coverage-treemap-ci
 
     - name: Store code coverage file
       uses: actions/upload-artifact@v4
