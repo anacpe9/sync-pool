@@ -10,14 +10,18 @@ test-coverage-template:
 test-coverage: test-coverage-template
 	GO_ENV="test" go tool cover -func         coverage/coverage.out
 
-test-coverage-html: test-coverage-template
+test-coverage-html-ci: test-coverage-template
 	GO_ENV="test" go tool cover -html         coverage/coverage.out -o coverage/coverage.html
+
+test-coverage-html: test-coverage-html-ci
 	open                                                               coverage/coverage.html
 
 # https://github.com/nikolaydubina/go-cover-treemap
 # go install github.com/nikolaydubina/go-cover-treemap@latest
-test-coverage-treemap: test-coverage-template
+test-coverage-treemap-ci: test-coverage-template
 	go-cover-treemap            -coverprofile coverage/coverage.out > coverage/coverage.svg
+
+test-coverage-treemap: test-coverage-template
 	open                                                              coverage/coverage.svg
 
 # https://github.com/oligot/go-mod-upgrade

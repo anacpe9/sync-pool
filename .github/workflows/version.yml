@@ -161,8 +161,12 @@ jobs:
         name: coverage-${{ github.sha }}
 
     - name: release
-      uses: create-release@v1
+      uses: actions/create-release@v1
       with:
-        release_name: ${{ env.VALID_TAG }}
-        artifacts: coverage/*
-        body: "Release ${{env.VALID_TAG}}"
+        tag_name: ${{ env.VALID_TAG }}
+        release_name: Release ${{ env.VALID_TAG }}
+        body: |
+          Changes in this Release
+          - First Release
+        draft: false
+        prerelease: false

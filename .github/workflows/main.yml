@@ -56,7 +56,7 @@ jobs:
       run: make test-coverage
 
     - name: "Test Coverage - HTML"
-      run: make test-coverage-html
+      run: make test-coverage-html-ci
 
     - name: "Test Coverage - Treemap"
-      run: make test-coverage-treemap
+      run: make test-coverage-treemap-ci
