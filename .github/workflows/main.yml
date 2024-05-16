@@ -1,0 +1,23 @@
+name: Build and deploy to the staging environment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: "Testing"
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Test"
+      run: make test
+
+    - name: "Test Coverage"
+      run: make test-coverage
+
+    - name: "Test Coverage - HTML"
+      run: make test-coverage-html
+
+    - name: "Test Coverage - Treemap"
+      run: make test-coverage-treemap

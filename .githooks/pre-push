@@ -1,0 +1,62 @@
+#!/bin/sh
+
+/* ************************************************************************** */
+/* By:      N,Anucha <ana.cpe9@gmail.com>
+/* Created: 2024-05-15 by n,anucha
+/* Updated: 2024-05-15 by n,anucha
+/* ************************************************************************** */
+
+LC_ALL=C
+
+# https://github.com/CompSciLauren/awesome-git-hooks/blob/master/pre-push-hooks/prevent-bad-push.hook
+# https://github.com/CompSciLauren/awesome-git-hooks/blob/master/update-hooks/prevent-unannotated-tags.hook
+
+# - Allow tagging only on specific branches, such as release-* or staging-*
+# - Allow only tags corresponding to the version number extracted from the branch name.
+# - Allow only tags using a lowercase semver regex pattern. ref - https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+
+# Regular expressions for branch names and semver tags
+REGEX_SEMVER="^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)((\+|\-)[0-9a-z\.]+)*$"
+REGEX_BRANCH="(release|staging)-(0|[1-9]\d*)\.(0|[1-9]\d*)$"
+
+# Error prefix
+ERROR_PREFIX="Git pre-push error:"
+
+# Loop through pushed references
+while read local_ref local_sha remote_ref remote_sha; do
+  # Skip if not a tag reference
+  if ! [[ "$local_ref" =~ ^refs/tags/ ]]; then
+      continue
+  fi
+
+  # Extract tag name
+  tag_name=${local_ref##*/}
+
+  # Validate tag format
+  if ! [[ "$tag_name" =~ $REGEX_SEMVER ]]; then
+    echo "$ERROR_PREFIX Invalid tag format for '$tag_name'. Only lowercase semver tags are allowed."
+    exit 1
+  fi
+
+  # Extract associated branch
+  associated_branch=$(git branch --contains "$(git rev-list -n 1 "$tag_name")" | awk '{print $2}')
+
+  # Validate branch and tag association
+  if ! [[ "$associated_branch" =~ $REGEX_BRANCH ]]; then
+    echo "$ERROR_PREFIX Tag '$tag_name' cannot be pushed to branch '$associated_branch'."
+    exit 1
+  fi
+
+  # Extract version from branch name
+  branch_version=$(echo "$associated_branch" | grep -oE "\d+\.\d+$")
+
+  # Check if tag version corresponds to branch version
+  if ! [[ "$tag_name" == "$branch_version".* ]]; then
+    echo "$ERROR_PREFIX Tag '$tag_name' is not associated with the branch version '$branch_version'."
+    exit 1
+  fi
+
+done
+
+exit 0
+

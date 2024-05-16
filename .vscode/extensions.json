@@ -1,0 +1,14 @@
+{
+  "extensionPack": [],
+  "recommendations": [
+    "streetsidesoftware.code-spell-checker",
+    "visualstudioexptteam.vscodeintellicode",
+    "visualstudioexptteam.intellicode-api-usage-examples",
+    "golang.go",
+    "editorconfig.editorconfig",
+    "donjayamanne.githistory",
+    "eamodio.gitlens",
+    "pkief.material-icon-theme",
+    "github.vscode-github-actions",
+  ],
+}

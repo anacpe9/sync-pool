@@ -1,0 +1,133 @@
+name: Build and deploy to the staging environment
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGEX_SEMVER: "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)((\\+|\\-)[0-9a-z\\.]+)*$"
+  # REGEX_BRANCH: "(release|staging)-(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+
+jobs:
+  allow:
+    # Check if the commit has a tag and is on a main branch
+    # and commit message does not contain 'skip ci' words
+    if: ${{ !contains(github.event.head_commit.message, 'skip ci') && github.ref_type == 'tag' && startsWith(github.ref, 'refs/heads/main') }}
+    name: Allow running pipeline on the current commit has a tag
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    outputs:
+      VALID_TAG: ${{ steps.validate_tag.outputs.GIT_REF_TAG }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        fetch-tags: true
+
+    - name: Check if the commit has a tag and is on a main branch
+      if: ${{ github.ref_type != 'tag' || !startsWith(github.ref, 'refs/heads/main') }}
+      run: |
+        echo "The current commit has no tag or is not on a main branch."
+        exit 1
+
+    - name: Try to get the tag name associated with the current commit
+      run: |
+        tag_name=$(git describe --tags --exact-match HEAD 2>/dev/null || true)
+
+    - name: Check if the tag name is empty (indicating no tag found)
+      run: |
+        if [[ -z "$tag_name" ]]; then
+          echo "Error: No tag found for the current commit."
+          exit 1
+        fi
+
+    - name: Validate the tag format
+      run: |
+        if ! [[ "$tag_name" =~ $REGEX_SEMVER ]]; then
+          echo "Error: Invalid tag format for '$tag_name'. Only lowercase semver tags are allowed."
+          exit 1
+        fi
+
+    # - name: Validate the tag against the branch
+    #   run: |
+    #     associated_branch=$(git rev-parse --abbrev-ref HEAD)
+    #     if ! [[ "$associated_branch" =~ $REGEX_BRANCH ]]; then
+    #       echo "Error: Tag '$tag_name' not allowed on branch '$associated_branch'."
+    #       exit 1
+    #     fi
+    #
+    # - name: Validate the tag version against the branch version
+    #   run: |
+    #     branch_version=$(echo "$associated_branch" | grep -oE "\d+\.\d+$")
+    #
+    #     if ! [[ "$tag_name" == "$branch_version".* ]]; then
+    #       echo "Error: Tag '$tag_name' is not associated with branch version '$branch_version'."
+    #       exit 1
+    #     fi
+
+    - name: Cache tag_name for share to other jobs
+      id: validate_tag
+      run: |
+        echo ::set-output name=GIT_REF_TAG::$tag_name
+
+    - name: Details on failure
+      if: ${{ failure() }}
+      run: |
+        echo ${{ steps.validate_tag.outputs.errors }}
+
+  test:
+    needs: [allow]
+    name: "Testing"
+    runs-on: ubuntu-latest
+    env:
+      VALID_TAG: ${{ needs.allow.outputs.VALID_TAG }}
+    outputs:
+      VALID_TAG: ${{ env.VALID_TAG }}
+    steps:
+    - name: "Test"
+      run: make test
+
+    - name: "Test Coverage"
+      run: make test-coverage
+
+    - name: "Test Coverage - HTML"
+      run: make test-coverage-html
+
+    - name: "Test Coverage - Treemap"
+      run: make test-coverage-treemap
+
+    - name: Store code coverage file
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-${{ github.sha }}
+        path: coverage/*
+
+    - name: Cache tag_name for share to other jobs
+      id: validate_tag
+      run: |
+        echo ::set-output name=GIT_REF_TAG::$tag_name
+
+  release:
+    needs: [test]
+    name: "Release"
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      VALID_TAG: ${{ needs.test.outputs.VALID_TAG }}
+    outputs:
+      VALID_TAG: ${{ env.VALID_TAG }}
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: coverage-${{ github.sha }}
+
+    - name: release
+      uses: create-release@v1
+      with:
+        release_name: ${{ env.VALID_TAG }}
+        artifacts: coverage/*
+        body: "Release ${{env.VALID_TAG}}"
