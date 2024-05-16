@@ -48,14 +48,26 @@ jobs:
     - name: github.event.head_commit.message
       run: echo "${{ github.event.head_commit.message }}"
 
-    - name: github.ref_type
-      run: echo "${{ github.ref_type }}"
-
     - name: github.ref
       run: echo "${{ github.ref }}"
 
+    - name: github.ref_type
+      run: echo "${{ github.ref_type }}"
+
     - name: github.ref_name
       run: echo "${{ github.ref_name }}"
+
+    - name: github.head_ref
+      run: echo "${{ github.head_ref }}"
+
+    - name: github.event.base_ref
+      run: echo "${{ github.event.base_ref }}"
+
+    - name: github.event.head_commit
+      run: echo "${{ github.event.head_commit }}"
+
+    - name: github.event.ref
+      run: echo "${{ github.event.ref }}
 
   allow:
     # Check if the commit has a tag and is on a main branch
