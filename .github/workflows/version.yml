@@ -5,7 +5,7 @@ on:
     branches:
       - main
     tags:
-      - '[1-9][0-9]*.[1-9][0-9]*.[1-9][0-9]*[+-]?[0-9a-z-]*'
+      - '[1-9][0-9]*.[1-9][0-9]*.[1-9][0-9]*'
       # - '**'
       # - '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)((\+|\-)[0-9a-z\.]+)*'
       # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushbranchestagsbranches-ignoretags-ignore
