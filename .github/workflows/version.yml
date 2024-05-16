@@ -107,6 +107,8 @@ jobs:
       run: |
         if [[ -z "$tag_name" ]]; then
           echo "Error: No tag found for the current commit."
+          git log --oneline -n 10
+          git tag
           exit 1
         fi
 
