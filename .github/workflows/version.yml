@@ -2,8 +2,8 @@ name: Build and deploy to the staging environment
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - ^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)((\\+|\\-)[0-9a-z\\.]+)*$
 
 env:
   REGEX_SEMVER: "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)((\\+|\\-)[0-9a-z\\.]+)*$"
