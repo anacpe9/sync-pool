@@ -16,7 +16,7 @@ LC_ALL=C
 # - Allow only tags using a lowercase semver regex pattern. ref - https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
 
 # Regular expressions for branch names and semver tags
-REGEX_SEMVER="^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)((\+|\-)[0-9a-z\.]+)*$"
+REGEX_SEMVER="^v?(0|[1-9]\d*)(\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?)?((\+|\-)[0-9a-z\.]+)*$"
 REGEX_BRANCH="(release|staging)-(0|[1-9]\d*)\.(0|[1-9]\d*)$"
 
 # Error prefix
