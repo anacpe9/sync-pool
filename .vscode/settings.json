@@ -7,4 +7,5 @@
   "files.trimTrailingWhitespace": true,
   "files.encoding": "utf8",
   "files.eol": "\n",
+  "makefile.configureOnOpen": false,
 }
