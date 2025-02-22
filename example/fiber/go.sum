@@ -1,5 +1,7 @@
 github.com/anacpe9/sync-pool v0.0.0-20240516133519-c65df61322e5 h1:qhTiLiG6ghB/32FIOZssHTnogIYOVwT7UeN6XN8CRb0=
 github.com/anacpe9/sync-pool v0.0.0-20240516133519-c65df61322e5/go.mod h1:x3j4nedftMp0oWcNLI3tOzgAWSBkbMmhExyFQegzVu8=
+github.com/anacpe9/sync-pool v0.0.0-20240516163944-63a71f98155d h1:t4gjPMY9yJxkM9YTvQHJ51dwJSdojZu2NAlLBuuJ9TM=
+github.com/anacpe9/sync-pool v0.0.0-20240516163944-63a71f98155d/go.mod h1:x3j4nedftMp0oWcNLI3tOzgAWSBkbMmhExyFQegzVu8=
 github.com/andybalholm/brotli v1.0.5 h1:8uQZIdzKmjc/iuPu7O2ioW48L81FgatrcpfFmiq/cCs=
 github.com/andybalholm/brotli v1.0.5/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
 github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=
